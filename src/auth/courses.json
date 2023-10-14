@@ -1,0 +1,15 @@
+[
+    {
+      "title": "Course-1",
+      "type": "Math"
+    },
+    {
+      "title": "Course-2",
+      "type": "Science"
+    },
+    {
+        "title": "Course-3",
+        "type": "Seducation"
+    }
+    
+  ]

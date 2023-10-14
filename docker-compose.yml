@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  dev-db:
+    image: postgres:15
+    ports:
+      - "5432:5434"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 210804Ernur
+      POSTGRES_DB: nest
