@@ -17,32 +17,68 @@ model User{
 
   email String @unique
   hash String
-  subscriptionType String
+ 
 
   firstName String?
   lastname String?
-  courses Courses[]
-  bookmarks Bookmark[]
+
+  organization_id    Int        @map(name: "organization_id")
+  organizationUserId String?    @map(name: "organizationUserId")
+
+
+  organization Organization    @relation( fields: [organization_id], references: [id])
+  UserSubscriptionTypeMap     UserSubscriptionTypeMap[]
+  courses                     Courses[]
+ 
   @@map("users")
 }
 
-model Bookmark{
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  course String 
-  description String?
-  link String
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  @@map("bookmarks")
+model Courses {
+  id                   Int              @id @default(autoincrement())
+  title                String
+  description          String
+  subscription_type    SubscriptionType @relation(fields: [subscription_type_id], references: [id])
+  subscription_type_id Int
+  lessons              Lesson[]
+  User                 User?            @relation(fields: [userId], references: [id])
+  userId               Int?
+
+  @@map("courses")
 }
 
-model Courses{
-  id Int     @id @default(autoincrement())
-  title String
-  type String
+model Lesson {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  video_link  String
+  course_id   Int
+  course      Courses @relation(fields: [course_id], references: [id])
+}
+model SubscriptionType {
+ id                      Int               @id @default(autoincrement())
+  title                   String
+  UserSubscriptionTypeMap UserSubscriptionTypeMap[]
+  Courses                 Courses[]
+
+  @@map("sub_type")
+}
+
+model UserSubscriptionTypeMap {
+  id                   Int              @id @default(autoincrement())
+  subscription_type    SubscriptionType @relation(fields: [subscription_type_id], references: [id])
+  user                 User             @relation(fields: [user_id], references: [id])
   subscription_type_id Int
-  user User   @relation(fields: [subscription_type_id], references: [id])
+  user_id              Int
+
+  @@map("user_sub")
+}
+
+model Organization {
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(255)
+
+  users User[]
+
+  @@map("organizations")
 }

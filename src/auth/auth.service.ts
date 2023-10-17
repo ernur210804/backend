@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto} from './dto';
-import { CourseDto } from 'src/courses/dto/course.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import *as argon from "argon2";
@@ -12,7 +11,7 @@ export class AuthService {
   constructor(private prisma: PrismaService){}  
 
 
-  async signup(dto: AuthDto ,coursesdto : CourseDto[]) {
+  async signup(dto: AuthDto ) {
     //generate the password hash
     const hash = await argon.hash(dto.password);
 
@@ -21,14 +20,12 @@ export class AuthService {
       const user = await this.prisma.user.create({
       data: {
         email: dto.email,
-        hash,
-        subscriptionType: dto.subscriptionType,
+        hash
+        
       },
       
     })
-    for (const courseDto of coursesdto) {
-      await this.createCourse(user.id, courseDto);
-    }
+   
     
     delete user.hash;
     //return the saved user
@@ -74,48 +71,10 @@ export class AuthService {
   }
 
 
-  async createCourse(userId: number, courseDto: CourseDto) {
-    try {
-      // Save the new course in the db
-      const course = await this.prisma.courses.create({
-        data: {
-          title: courseDto.title,
-          type: courseDto.type,
-          user: { connect: { id: userId } }, // Connect the course to the user
-        },
-      });
-  
-      return course;
-    } catch (error) {
-      // Handle errors
-      throw error;
-    }
-  }
+ 
   
 
-  getCoursesFromJsonFile(): CourseDto[] {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const baseDirectory = isProduction ? 'dist/auth/' : 'src/auth/';
-    // Read the JSON file
-    const filePath = path.join(__dirname,  'courses.json');
-    
-    try {
-      const jsonData = fs.readFileSync(filePath, 'utf8');
-      const coursesData = JSON.parse(jsonData);
-
-      // Map the data to CourseDto objects
-      const coursesDto: CourseDto[] = coursesData.map((course: any) => ({
-        title: course.title,
-        type: course.type,
-      }));
-
-      return coursesDto;
-    } catch (error) {
-      // Handle error reading or parsing the JSON file
-      console.error('Error reading courses JSON file:', error);
-      return [];
-    }
-  }
+  
 
 
 }
