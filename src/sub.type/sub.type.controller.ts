@@ -6,7 +6,7 @@ import { CreateSubscriptionTypeDto } from './dto/sub.type.dto';
 export class SubscriptionTypeController {
   constructor(private SubscriptionTypeServ: SubscriptionTypeService) {}
 
-  @Post()
+  @Post('create')
   async createSubType(@Body() dto: CreateSubscriptionTypeDto) {
     return this.SubscriptionTypeServ.CreateSubtype(dto);
   }

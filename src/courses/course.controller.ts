@@ -14,7 +14,7 @@ import {
   export class CoursesController {
     constructor(private readonly coursesService: CoursesService) {}
   
-    @Post()
+    @Post('create')
     create(@Body() courseData: CourseDto) {
       return this.coursesService.create(courseData);
     }

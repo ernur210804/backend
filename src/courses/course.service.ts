@@ -8,7 +8,12 @@ export class CoursesService {
   constructor(private prisma: PrismaService) {}
 
   async create(courseData: CourseDto) {
-    return this.prisma.courses.create({ data: courseData });
+    return this.prisma.courses.create({ data: {
+        title: 'pp1',
+        description: 'c++',
+        userId: 1,
+        subscription_type_id: 1
+    } });
   }
 
   async findOne(id: number): Promise<Courses | null> {
